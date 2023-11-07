@@ -10,6 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "ethereumjs-tx": "^2.1.2",
-    "web3": "^1.2.9"
+    "web3": "^4.0.2"
   }
 }
