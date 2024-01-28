@@ -4,7 +4,6 @@ import (
 	"sync"
 
 	"github.com/attestantio/go-eth2-client/api"
-	"github.com/attestantio/go-eth2-client/spec"
 	"github.com/attestantio/go-eth2-client/spec/altair"
 	"github.com/attestantio/go-eth2-client/spec/capella"
 	"github.com/attestantio/go-eth2-client/spec/phase0"
@@ -16,8 +15,8 @@ import (
 
 // ValidatorSigner represents the behavior of the validator signer
 type ValidatorSigner interface {
-	SignBeaconBlock(block *spec.VersionedBeaconBlock, domain phase0.Domain, pubKey []byte) (sig []byte, root []byte, err error)
-	SignBlindedBeaconBlock(block *api.VersionedBlindedBeaconBlock, domain phase0.Domain, pubKey []byte) (sig []byte, root []byte, err error)
+	SignBeaconBlock(block *api.VersionedProposal, domain phase0.Domain, pubKey []byte) (sig []byte, root []byte, err error)
+	SignBlindedBeaconBlock(block *api.VersionedBlindedProposal, domain phase0.Domain, pubKey []byte) (sig []byte, root []byte, err error)
 	SignBeaconAttestation(attestation *phase0.AttestationData, domain phase0.Domain, pubKey []byte) (sig []byte, root []byte, err error)
 	SignAggregateAndProof(agg *phase0.AggregateAndProof, domain phase0.Domain, pubKey []byte) (sig []byte, root []byte, err error)
 	SignSlot(slot phase0.Slot, domain phase0.Domain, pubKey []byte) (sig []byte, root []byte, err error)

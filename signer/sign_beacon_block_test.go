@@ -8,6 +8,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/attestantio/go-eth2-client/api"
+	apiv1deneb "github.com/attestantio/go-eth2-client/api/v1/deneb"
 	"github.com/attestantio/go-eth2-client/spec"
 	"github.com/attestantio/go-eth2-client/spec/altair"
 	"github.com/attestantio/go-eth2-client/spec/bellatrix"
@@ -61,7 +63,7 @@ func TestBlockProposal(t *testing.T) {
 	blk := &phase0.BeaconBlock{}
 	require.NoError(t, json.Unmarshal(blockByts, blk))
 
-	versionedBeaconBlock := &spec.VersionedBeaconBlock{
+	versionedBeaconBlock := &api.VersionedProposal{
 		Version: spec.DataVersionPhase0,
 		Phase0:  blk,
 	}
@@ -102,7 +104,7 @@ func TestBlockProposalAltair(t *testing.T) {
 	blk := &altair.BeaconBlock{}
 	require.NoError(t, blk.UnmarshalSSZ(_byteArray(blockSSZByts)))
 
-	versionedBeaconBlock := &spec.VersionedBeaconBlock{
+	versionedBeaconBlock := &api.VersionedProposal{
 		Version: spec.DataVersionAltair,
 		Altair:  blk,
 	}
@@ -146,7 +148,7 @@ func TestBlockProposalBellatrix(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, blk.UnmarshalSSZ(blockBytes))
 
-	versionedBeaconBlock := &spec.VersionedBeaconBlock{
+	versionedBeaconBlock := &api.VersionedProposal{
 		Version:   spec.DataVersionBellatrix,
 		Bellatrix: blk,
 	}
@@ -187,7 +189,7 @@ func TestBlockProposalCapella(t *testing.T) {
 	blk := &capella.BeaconBlock{}
 	require.NoError(t, json.Unmarshal(blkJSON, blk))
 
-	versionedBeaconBlock := &spec.VersionedBeaconBlock{
+	versionedBeaconBlock := &api.VersionedProposal{
 		Version: spec.DataVersionCapella,
 		Capella: blk,
 	}
@@ -243,9 +245,11 @@ func TestBlockProposalDeneb(t *testing.T) {
 	// setup signer
 	signer := NewSimpleSigner(wallet, &prot.NoProtection{}, core.PraterNetwork)
 
-	versionedBeaconBlock := &spec.VersionedBeaconBlock{
+	versionedBeaconBlock := &api.VersionedProposal{
 		Version: spec.DataVersionDeneb,
-		Deneb:   beaconBlock,
+		Deneb: &apiv1deneb.BlockContents{
+			Block: beaconBlock,
+		},
 	}
 	sig, _, err := signer.SignBeaconBlock(versionedBeaconBlock, _byteArray32(domain), _byteArray(pk))
 	fmt.Println(hex.EncodeToString(sig))
@@ -261,7 +265,7 @@ func TestProposalSlashingSignatures(t *testing.T) {
 	t.Run("valid proposal", func(t *testing.T) {
 		blk := testBlock(t)
 		blk.Slot = 99
-		versionedBeaconBlock := &spec.VersionedBeaconBlock{
+		versionedBeaconBlock := &api.VersionedProposal{
 			Version: spec.DataVersionPhase0,
 			Phase0:  blk,
 		}
@@ -272,7 +276,7 @@ func TestProposalSlashingSignatures(t *testing.T) {
 	t.Run("valid proposal, sign using nil pk. Should error", func(t *testing.T) {
 		blk := testBlock(t)
 		blk.Slot = 99
-		versionedBeaconBlock := &spec.VersionedBeaconBlock{
+		versionedBeaconBlock := &api.VersionedProposal{
 			Version: spec.DataVersionPhase0,
 			Phase0:  blk,
 		}
@@ -285,7 +289,7 @@ func TestProposalSlashingSignatures(t *testing.T) {
 		blk := testBlock(t)
 		blk.Slot = 99
 		blk.StateRoot = _byteArray32("0000000081509579e35e84020ad8751eca180b44df470332d3ad17fc6fd52459")
-		versionedBeaconBlock := &spec.VersionedBeaconBlock{
+		versionedBeaconBlock := &api.VersionedProposal{
 			Version: spec.DataVersionPhase0,
 			Phase0:  blk,
 		}
@@ -298,7 +302,7 @@ func TestProposalSlashingSignatures(t *testing.T) {
 	t.Run("double proposal, different body root. Should error", func(t *testing.T) {
 		blk := testBlock(t)
 		blk.Slot = 99
-		versionedBeaconBlock := &spec.VersionedBeaconBlock{
+		versionedBeaconBlock := &api.VersionedProposal{
 			Version: spec.DataVersionPhase0,
 			Phase0:  blk,
 		}
@@ -313,7 +317,7 @@ func TestProposalSlashingSignatures(t *testing.T) {
 		blk := testBlock(t)
 		blk.Slot = 99
 		blk.ParentRoot = _byteArray32("0000000081509579e35e84020ad8751eca180b44df470332d3ad17fc6fd52458")
-		versionedBeaconBlock := &spec.VersionedBeaconBlock{
+		versionedBeaconBlock := &api.VersionedProposal{
 			Version: spec.DataVersionPhase0,
 			Phase0:  blk,
 		}
@@ -327,7 +331,7 @@ func TestProposalSlashingSignatures(t *testing.T) {
 		blk := testBlock(t)
 		blk.Slot = 99
 		blk.ProposerIndex = 3
-		versionedBeaconBlock := &spec.VersionedBeaconBlock{
+		versionedBeaconBlock := &api.VersionedProposal{
 			Version: spec.DataVersionPhase0,
 			Phase0:  blk,
 		}
@@ -349,7 +353,7 @@ func TestFarFutureProposalSignature(t *testing.T) {
 
 		blk := testBlock(t)
 		blk.Slot = maxValidSlot
-		versionedBeaconBlock := &spec.VersionedBeaconBlock{
+		versionedBeaconBlock := &api.VersionedProposal{
 			Version: spec.DataVersionPhase0,
 			Phase0:  blk,
 		}
@@ -363,7 +367,7 @@ func TestFarFutureProposalSignature(t *testing.T) {
 
 		blk := testBlock(t)
 		blk.Slot = maxValidSlot + 1
-		versionedBeaconBlock := &spec.VersionedBeaconBlock{
+		versionedBeaconBlock := &api.VersionedProposal{
 			Version: spec.DataVersionPhase0,
 			Phase0:  blk,
 		}

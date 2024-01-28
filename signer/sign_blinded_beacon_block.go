@@ -9,7 +9,7 @@ import (
 )
 
 // SignBlindedBeaconBlock signs the given beacon block
-func (signer *SimpleSigner) SignBlindedBeaconBlock(b *api.VersionedBlindedBeaconBlock, domain phase0.Domain, pubKey []byte) ([]byte, []byte, error) {
+func (signer *SimpleSigner) SignBlindedBeaconBlock(b *api.VersionedBlindedProposal, domain phase0.Domain, pubKey []byte) ([]byte, []byte, error) {
 	slot, err := b.Slot()
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "could not get block slot")

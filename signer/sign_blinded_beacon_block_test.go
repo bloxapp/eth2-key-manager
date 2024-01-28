@@ -56,7 +56,7 @@ func TestBenchmarkBlindedBlockProposalBellatrix(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, blk.UnmarshalSSZ(blockBytes))
 
-	versionedBlindedBeaconBlock := &api.VersionedBlindedBeaconBlock{
+	versionedBlindedBeaconBlock := &api.VersionedBlindedProposal{
 		Version:   spec.DataVersionBellatrix,
 		Bellatrix: blk,
 	}
@@ -98,7 +98,7 @@ func TestBenchmarkBlindedBlockProposalCapella(t *testing.T) {
 	blk := &apiv1capella.BlindedBeaconBlock{}
 	require.NoError(t, json.Unmarshal(blkJSON, blk))
 
-	versionedBlindedBeaconBlock := &api.VersionedBlindedBeaconBlock{
+	versionedBlindedBeaconBlock := &api.VersionedBlindedProposal{
 		Version: spec.DataVersionCapella,
 		Capella: blk,
 	}
@@ -170,7 +170,7 @@ func TestBenchmarkBlindedBlockProposalDeneb(t *testing.T) {
 	// setup signer
 	signer := NewSimpleSigner(wallet, &prot.NoProtection{}, core.PraterNetwork)
 
-	versionedBlindedBeaconBlock := &api.VersionedBlindedBeaconBlock{
+	versionedBlindedBeaconBlock := &api.VersionedBlindedProposal{
 		Version: spec.DataVersionDeneb,
 		Deneb:   blindedBeaconBlock,
 	}
@@ -222,7 +222,7 @@ func TestDoubleProposalsSigning_Regular_Blinded(t *testing.T) {
 	// minimal slashing protection
 	require.NoError(t, protector.UpdateHighestProposal(_byteArray(pk), blk.Slot-1))
 
-	versionedBeaconBlock := &spec.VersionedBeaconBlock{
+	versionedBeaconBlock := &api.VersionedProposal{
 		Version:   spec.DataVersionBellatrix,
 		Bellatrix: blk,
 	}
@@ -233,7 +233,7 @@ func TestDoubleProposalsSigning_Regular_Blinded(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, blindedBlk.UnmarshalSSZ(blockBytes))
 
-	versionedBlindedBeaconBlock := &api.VersionedBlindedBeaconBlock{
+	versionedBlindedBeaconBlock := &api.VersionedBlindedProposal{
 		Version:   spec.DataVersionBellatrix,
 		Bellatrix: blindedBlk,
 	}
@@ -288,7 +288,7 @@ func TestDoubleProposalsSigning_Blinded_Regular(t *testing.T) {
 	// minimal slashing protection
 	require.NoError(t, protector.UpdateHighestProposal(_byteArray(pk), blk.Slot-1))
 
-	versionedBeaconBlock := &spec.VersionedBeaconBlock{
+	versionedBeaconBlock := &api.VersionedProposal{
 		Version:   spec.DataVersionBellatrix,
 		Bellatrix: blk,
 	}
@@ -299,7 +299,7 @@ func TestDoubleProposalsSigning_Blinded_Regular(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, blindedBlk.UnmarshalSSZ(blockBytes))
 
-	versionedBlindedBeaconBlock := &api.VersionedBlindedBeaconBlock{
+	versionedBlindedBeaconBlock := &api.VersionedBlindedProposal{
 		Version:   spec.DataVersionBellatrix,
 		Bellatrix: blindedBlk,
 	}

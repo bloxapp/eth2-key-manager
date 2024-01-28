@@ -1,6 +1,7 @@
 package signer
 
 import (
+	"github.com/attestantio/go-eth2-client/api"
 	"github.com/attestantio/go-eth2-client/spec"
 	"github.com/attestantio/go-eth2-client/spec/phase0"
 	ssz "github.com/ferranbt/fastssz"
@@ -8,7 +9,7 @@ import (
 )
 
 // SignBeaconBlock signs the given beacon block
-func (signer *SimpleSigner) SignBeaconBlock(b *spec.VersionedBeaconBlock, domain phase0.Domain, pubKey []byte) ([]byte, []byte, error) {
+func (signer *SimpleSigner) SignBeaconBlock(b *api.VersionedProposal, domain phase0.Domain, pubKey []byte) ([]byte, []byte, error) {
 	slot, err := b.Slot()
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "could not get block slot")
@@ -25,7 +26,7 @@ func (signer *SimpleSigner) SignBeaconBlock(b *spec.VersionedBeaconBlock, domain
 	case spec.DataVersionCapella:
 		block = b.Capella
 	case spec.DataVersionDeneb:
-		block = b.Deneb
+		block = b.Deneb.Block
 
 	default:
 		return nil, nil, errors.Errorf("unsupported block version %d", b.Version)
