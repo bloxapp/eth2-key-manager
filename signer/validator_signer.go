@@ -30,17 +30,22 @@ type ValidatorSigner interface {
 	SignBLSToExecutionChange(blsToExecutionChange *capella.BLSToExecutionChange, domain phase0.Domain, pubKey []byte) (sig []byte, root []byte, err error)
 }
 
+type network interface {
+	EstimatedEpochAtSlot(slot phase0.Slot) phase0.Epoch
+	EstimatedSlotAtTime(time int64) phase0.Slot
+}
+
 // SimpleSigner implements ValidatorSigner interface
 type SimpleSigner struct {
 	wallet            core.Wallet
 	slashingProtector core.SlashingProtector
-	network           core.Network
+	network           network
 	signLocks         map[string]*sync.RWMutex
 	mapLock           *sync.RWMutex
 }
 
 // NewSimpleSigner is the constructor of SimpleSigner
-func NewSimpleSigner(wallet core.Wallet, slashingProtector core.SlashingProtector, network core.Network) *SimpleSigner {
+func NewSimpleSigner(wallet core.Wallet, slashingProtector core.SlashingProtector, network network) *SimpleSigner {
 	return &SimpleSigner{
 		wallet:            wallet,
 		slashingProtector: slashingProtector,
