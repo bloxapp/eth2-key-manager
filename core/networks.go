@@ -11,6 +11,9 @@ import (
 // Network represents the network.
 type Network string
 
+// Networks is a list of all available networks
+var Networks = []Network{MainNetwork, HoleskyNetwork, PraterNetwork, PyrmontNetwork}
+
 // NetworkFromString returns network from the given string value
 func NetworkFromString(n string) Network {
 	switch n {
@@ -41,6 +44,23 @@ func (n Network) GenesisForkVersion() phase0.Version {
 	default:
 		logrus.WithField("network", n).Fatal("undefined network")
 		return phase0.Version{}
+	}
+}
+
+// NetworkFromGenesisForkVersion returns the network base on the 4 bytes of the genesis fork version
+func NetworkFromGenesisForkVersion(f phase0.Version) Network {
+	switch f {
+	case phase0.Version{0, 0, 32, 9}:
+		return PyrmontNetwork
+	case phase0.Version{0x00, 0x00, 0x10, 0x20}:
+		return PraterNetwork
+	case phase0.Version{0x01, 0x01, 0x70, 0x00}:
+		return HoleskyNetwork
+	case phase0.Version{0, 0, 0, 0}:
+		return MainNetwork
+	default:
+		logrus.WithField("fork version", f).Fatal("undefined fork version")
+		return ""
 	}
 }
 
